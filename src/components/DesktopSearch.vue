@@ -59,7 +59,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="containerRef" class="relative hidden w-full max-w-xl md:block">
+  <div ref="containerRef" class="relative hidden md:block md:w-[36rem] lg:w-[42rem] xl:w-[46rem]">
     <div class="relative">
       <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-kawayan" aria-hidden="true">
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">

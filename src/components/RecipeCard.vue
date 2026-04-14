@@ -13,11 +13,11 @@ const totalMins = (r: Recipe) => r.prepMins + r.cookMins
 
 <template>
   <article
-    class="group overflow-hidden rounded-card bg-harina shadow-card transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
+    class="group flex h-full flex-col overflow-hidden rounded-card bg-harina shadow-card transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
   >
     <RouterLink
       :to="{ name: 'recipe', params: { slug: recipe.slug } }"
-      class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-bigas"
+      class="flex h-full flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-bigas"
     >
       <div class="aspect-[16/10] overflow-hidden bg-bayong">
         <img
@@ -29,19 +29,17 @@ const totalMins = (r: Recipe) => r.prepMins + r.cookMins
           class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
         />
       </div>
-      <div class="p-4">
+      <div class="flex flex-1 flex-col p-4">
         <div v-if="recipe.featured && !hideFeaturedBadge" class="mb-2 inline-flex rounded-chip bg-calamansi px-3 py-0.5 font-body text-caption font-semibold uppercase tracking-wider text-uling">
           Featured
         </div>
         <h2 class="font-heading text-lg text-uling group-hover:text-terracotta-dark">
           {{ recipe.title }}
         </h2>
-        <p class="mt-1 line-clamp-2 text-small text-kawayan">
+        <p class="mt-1 mb-2 line-clamp-2 text-small text-kawayan">
           {{ recipe.description }}
         </p>
-        <div
-          class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-bayong pt-3 text-small text-kawayan"
-        >
+        <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-bayong pt-3 text-small text-kawayan">
           <span class="tabular-nums">{{ totalMins(recipe) }} min</span>
           <span class="text-bayong" aria-hidden="true">·</span>
           <span>{{ recipe.difficulty }}</span>

@@ -76,7 +76,7 @@ onMounted(() => {
           </button>
         </div>
         <ul v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <li v-for="r in filteredRecipes" :key="r.id">
+          <li v-for="r in filteredRecipes" :key="r.id" class="h-full">
             <RecipeCard :recipe="r" />
           </li>
         </ul>
