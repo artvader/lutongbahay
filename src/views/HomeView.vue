@@ -5,12 +5,14 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { recipes } from '@/data/recipes'
 import { useRecipeBrowse } from '@/composables/useRecipeBrowse'
+import { useRecipes } from '@/composables/useRecipes'
 import SearchAndFilters from '@/components/SearchAndFilters.vue'
 import RecipeCard from '@/components/RecipeCard.vue'
 
 const swiperModules = [Autoplay, Pagination]
+const { recipes, ensureRecipesLoaded } = useRecipes()
+void ensureRecipesLoaded()
 
 const {
   query,
@@ -26,7 +28,7 @@ const {
   clearFilters,
 } = useRecipeBrowse()
 
-const featured = computed(() => recipes.filter((r) => r.featured))
+const featured = computed(() => recipes.value.filter((r) => r.featured))
 
 // ── Infinite scroll ──────────────────────────────────────────────
 const getPageSize = () => {

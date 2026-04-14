@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { recipes } from '@/data/recipes'
+import { useRecipes } from '@/composables/useRecipes'
 
 const router = useRouter()
+const { recipes, ensureRecipesLoaded } = useRecipes()
+void ensureRecipesLoaded()
 const query = ref('')
 const isFocused = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
@@ -17,7 +19,7 @@ function clearSearch() {
 const results = computed(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return []
-  return recipes
+  return recipes.value
     .filter((r) => {
       const hay = [r.title, r.description, r.region, r.course, ...r.ingredients]
         .join(' ')

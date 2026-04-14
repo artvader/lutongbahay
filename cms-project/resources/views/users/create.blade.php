@@ -1,0 +1,18 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Create CMS User</h2>
+    </x-slot>
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow sm:rounded-lg p-6">
+                @if ($errors->any())
+                    <div class="mb-4 bg-red-100 text-red-700 px-4 py-2 rounded">{{ $errors->first() }}</div>
+                @endif
+                <form method="POST" action="{{ route('users.store') }}" class="space-y-4">
+                    @include('users._form')
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded">Create User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

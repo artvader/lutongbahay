@@ -11,7 +11,7 @@ import LogoMark from '@/components/LogoMark.vue'
         About this preview
       </h1>
       <p class="mt-4 text-center text-body text-kawayan">
-        Lutong Bahay is a curated Filipino recipe platform. This build is a static front-end preview: real content, search, and ratings will connect to the CMS and API in phase 2.
+        Lutong Bahay is a curated Filipino recipe platform. This preview now loads recipes from the CMS API, with more content workflows and features coming next.
       </p>
       <ul class="mt-8 space-y-3 text-small text-kawayan">
         <li class="flex gap-2">

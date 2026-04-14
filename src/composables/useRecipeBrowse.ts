@@ -1,11 +1,13 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { recipes } from '@/data/recipes'
 import type { Difficulty } from '@/types/recipe'
+import { useRecipes } from '@/composables/useRecipes'
 
 export const useRecipeBrowse = () => {
   const route = useRoute()
+  const { recipes, ensureRecipesLoaded } = useRecipes()
   const query = ref((route.query.q as string) || '')
+  void ensureRecipesLoaded()
   
   watch(
     () => route.query.q,
@@ -43,7 +45,7 @@ export const useRecipeBrowse = () => {
 
   const filteredRecipes = computed(() => {
     const q = query.value.trim().toLowerCase()
-    return recipes.filter((r) => {
+    return recipes.value.filter((r) => {
       if (courses.value.size && !courses.value.has(r.course)) return false
       if (regions.value.size && !regions.value.has(r.region)) return false
       if (difficulties.value.size && !difficulties.value.has(r.difficulty)) return false

@@ -29,7 +29,7 @@ onMounted(() => {
     <header class="mb-8">
       <h1 class="font-heading text-h1 text-uling">Browse Recipes</h1>
       <p class="mt-2 max-w-2xl text-body text-kawayan">
-        Find a dish by name, ingredient, or mood. Filters match the vision for region, course, difficulty, and main ingredient — wired to static sample data until the CMS lands.
+        Find a dish by name, ingredient, or mood. Filters use live data from the CMS recipe database.
       </p>
     </header>
 

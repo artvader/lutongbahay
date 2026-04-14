@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { getRecipeBySlug } from '@/data/recipes'
+import { useRecipes } from '@/composables/useRecipes'
 import StarRating from '@/components/StarRating.vue'
 
 const route = useRoute()
+const { getRecipeBySlug, ensureRecipesLoaded, loading } = useRecipes()
+void ensureRecipesLoaded()
 const slug = computed(() => route.params.slug as string)
 const recipe = computed(() => getRecipeBySlug(slug.value))
 
@@ -145,7 +147,7 @@ const printRecipe = () => {
   </div>
 
   <div
-    v-else
+    v-else-if="!loading"
     class="mx-auto max-w-lg px-4 py-20 text-center"
   >
     <h1 class="font-heading text-h1 text-uling">Recipe not found</h1>
@@ -158,6 +160,10 @@ const printRecipe = () => {
     >
       Go home
     </RouterLink>
+  </div>
+
+  <div v-else class="mx-auto max-w-lg px-4 py-20 text-center">
+    <p class="text-kawayan">Loading recipe...</p>
   </div>
 </template>
 

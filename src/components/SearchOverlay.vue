@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { recipes } from '@/data/recipes'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
+import { useRecipes } from '@/composables/useRecipes'
 
 const { isSearchOpen } = useSearchOverlay()
+const { recipes, ensureRecipesLoaded } = useRecipes()
+void ensureRecipesLoaded()
 
 const router = useRouter()
 const query = ref('')
@@ -25,7 +27,7 @@ watch(
 const results = computed(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return []
-  return recipes
+  return recipes.value
     .filter((r) => {
       const hay = [r.title, r.description, r.region, r.course, ...r.ingredients]
         .join(' ')

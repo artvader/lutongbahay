@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { filterGroups } from '@/data/recipes'
 import type { Difficulty } from '@/types/recipe'
 import MobileActiveFilters, { type ActiveFilter } from '@/components/MobileActiveFilters.vue'
+import { useRecipes } from '@/composables/useRecipes'
 
 const query = defineModel<string>('query', { default: '' })
 
@@ -16,6 +16,8 @@ const props = defineProps<{
 }>()
 
 const showSearch = computed(() => props.showSearch !== false)
+const { filterGroups, ensureRecipesLoaded } = useRecipes()
+void ensureRecipesLoaded()
 
 const emit = defineEmits<{
   toggleCourse: [value: string]
@@ -88,7 +90,7 @@ const chipOnOther = 'bg-terracotta text-white ring-1 ring-terracotta'
         />
       </div>
       <p class="mt-1.5 text-caption text-kawayan">
-        Full search across the library ships with the CMS in phase 2 — this preview filters the sample set in your browser only.
+        Filters are based on live recipe data from the CMS.
       </p>
     </div>
 
