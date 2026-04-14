@@ -1,9 +1,18 @@
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { recipes } from '@/data/recipes'
 import type { Difficulty } from '@/types/recipe'
 
 export const useRecipeBrowse = () => {
-  const query = ref('')
+  const route = useRoute()
+  const query = ref((route.query.q as string) || '')
+  
+  watch(
+    () => route.query.q,
+    (newQ) => {
+      if (newQ !== undefined) query.value = newQ as string
+    }
+  )
   const courses = ref<Set<string>>(new Set())
   const regions = ref<Set<string>>(new Set())
   const difficulties = ref<Set<Difficulty>>(new Set())

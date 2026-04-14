@@ -25,10 +25,10 @@ import LogoMark from '@/components/LogoMark.vue'
       </ul>
       <div class="mt-10 flex flex-wrap justify-center gap-3">
         <RouterLink
-          to="/search"
+          to="/browse"
           class="inline-flex min-h-[48px] items-center justify-center rounded-btn bg-terracotta px-5 font-body text-small font-semibold text-white hover:bg-terracotta-dark"
         >
-          Try search UI
+          Try browse UI
         </RouterLink>
         <RouterLink
           to="/"

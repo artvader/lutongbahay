@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
+import { useSearchOverlay } from '@/composables/useSearchOverlay'
 
 const route = useRoute()
+const { isSearchOpen } = useSearchOverlay()
 
 type Tab = { name: string; to: string; label: string; match: string[] }
 
 const tabs: Tab[] = [
   { name: 'home', to: '/', label: 'Home', match: ['home'] },
-  { name: 'search', to: '/search', label: 'Search', match: ['search'] },
+  { name: 'search', to: '/browse', label: 'Search', match: ['browse', 'search'] },
   { name: 'saved', to: '/saved', label: 'Saved', match: ['saved'] },
   { name: 'more', to: '/more', label: 'More', match: ['more'] },
 ]
 
 const isActive = (tab: Tab) => tab.match.some((m) => route.name === m)
+
+function handleTabClick(e: Event, tab: Tab) {
+  if (tab.name === 'search') {
+    e.preventDefault()
+    isSearchOpen.value = true
+  }
+}
 </script>
 
 <template>
@@ -30,6 +39,7 @@ const isActive = (tab: Tab) => tab.match.some((m) => route.name === m)
               ? 'text-terracotta'
               : 'text-kawayan hover:text-uling'
           "
+          @click="handleTabClick($event, tab)"
         >
           <template v-if="tab.name === 'home'">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">

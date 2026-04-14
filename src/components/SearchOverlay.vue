@@ -2,16 +2,16 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { recipes } from '@/data/recipes'
+import { useSearchOverlay } from '@/composables/useSearchOverlay'
 
-const props = defineProps<{ open: boolean }>()
-const emit = defineEmits<{ 'update:open': [value: boolean] }>()
+const { isSearchOpen } = useSearchOverlay()
 
 const router = useRouter()
 const query = ref('')
 const inputEl = ref<HTMLInputElement | null>(null)
 
 watch(
-  () => props.open,
+  () => isSearchOpen.value,
   async (val) => {
     if (val) {
       await nextTick()
@@ -36,7 +36,7 @@ const results = computed(() => {
 })
 
 function close() {
-  emit('update:open', false)
+  isSearchOpen.value = false
 }
 
 function goToRecipe(slug: string) {
@@ -46,7 +46,7 @@ function goToRecipe(slug: string) {
 
 function goToSearch() {
   close()
-  router.push({ path: '/search', query: query.value ? { q: query.value } : {} })
+  router.push({ path: '/browse', query: query.value ? { q: query.value } : {} })
 }
 </script>
 
@@ -54,7 +54,7 @@ function goToSearch() {
   <Teleport to="body">
     <Transition name="overlay">
       <div
-        v-if="open"
+        v-if="isSearchOpen"
         class="md:hidden fixed inset-0 z-50 flex flex-col bg-bigas"
         role="dialog"
         aria-modal="true"

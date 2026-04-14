@@ -29,11 +29,30 @@ const {
 const featured = computed(() => recipes.filter((r) => r.featured))
 
 // ── Infinite scroll ──────────────────────────────────────────────
-const PAGE_SIZE = 6
+const getPageSize = () => {
+  if (typeof window === 'undefined') return 6
+  if (window.innerWidth >= 1024) return 9
+  if (window.innerWidth >= 640) return 8
+  return 6
+}
+
+const pageSize = ref(getPageSize())
 const page = ref(1)
 
+const handleResize = () => {
+  pageSize.value = getPageSize()
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 const visibleRecipes = computed(() =>
-  filteredRecipes.value.slice(0, page.value * PAGE_SIZE),
+  filteredRecipes.value.slice(0, page.value * pageSize.value),
 )
 const hasMore = computed(
   () => visibleRecipes.value.length < filteredRecipes.value.length,
@@ -103,10 +122,10 @@ onBeforeUnmount(() => observer?.disconnect())
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <RouterLink
-              to="/search"
+              to="/browse"
               class="inline-flex min-h-[48px] min-w-[44px] items-center justify-center rounded-btn bg-terracotta px-6 font-body text-small font-semibold text-white shadow-card transition duration-150 hover:bg-terracotta-dark active:scale-[0.98]"
             >
-              Search & filters
+              Explore all recipes
             </RouterLink>
             <a
               href="#recipes"
@@ -154,62 +173,66 @@ onBeforeUnmount(() => observer?.disconnect())
     </section>
 
     <div id="recipes" class="mx-auto max-w-6xl scroll-mt-24 px-4 py-10 md:py-14">
-      <SearchAndFilters
-        v-model:query="query"
-        :courses="courses"
-        :regions="regions"
-        :difficulties="difficulties"
-        :ingredients="ingredients"
-        :result-count="filteredRecipes.length"
-        :show-search="false"
-        @toggle-course="toggleCourse"
-        @toggle-region="toggleRegion"
-        @toggle-difficulty="toggleDifficulty"
-        @toggle-ingredient="toggleIngredient"
-        @clear="clearFilters"
-      />
+      <div class="md:flex md:items-start md:gap-8">
+        <aside class="md:w-[320px] md:shrink-0 md:sticky md:top-24 max-md:mb-10">
+          <SearchAndFilters
+            v-model:query="query"
+            :courses="courses"
+            :regions="regions"
+            :difficulties="difficulties"
+            :ingredients="ingredients"
+            :result-count="filteredRecipes.length"
+            :show-search="false"
+            @toggle-course="toggleCourse"
+            @toggle-region="toggleRegion"
+            @toggle-difficulty="toggleDifficulty"
+            @toggle-ingredient="toggleIngredient"
+            @clear="clearFilters"
+          />
+        </aside>
 
-      <div class="mt-10">
-        <div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 class="font-heading text-h2 text-uling">All recipes</h2>
-          <p class="text-small text-kawayan tabular-nums">
-            {{ visibleRecipes.length }} of {{ filteredRecipes.length }} shown
-          </p>
-        </div>
-        <div
-          v-if="filteredRecipes.length === 0"
-          class="rounded-card border border-dashed border-bayong bg-harina/50 px-6 py-12 text-center"
-        >
-          <p class="font-heading text-h3 text-uling">No matches yet</p>
-          <p class="mt-2 text-small text-kawayan">
-            Try clearing filters or searching another ingredient.
-          </p>
-          <button
-            type="button"
-            class="mt-6 min-h-[48px] rounded-btn bg-terracotta px-6 font-body text-small font-semibold text-white hover:bg-terracotta-dark"
-            @click="clearFilters"
+        <div class="md:flex-1 w-full min-w-0">
+          <div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="font-heading text-h2 text-uling">All recipes</h2>
+            <p class="text-small text-kawayan tabular-nums">
+              {{ visibleRecipes.length }} of {{ filteredRecipes.length }} shown
+            </p>
+          </div>
+          <div
+            v-if="filteredRecipes.length === 0"
+            class="rounded-card border border-dashed border-bayong bg-harina/50 px-6 py-12 text-center"
           >
-            Clear filters
-          </button>
-        </div>
-        <ul
-          v-else
-          class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <li v-for="r in visibleRecipes" :key="r.id">
-            <RecipeCard :recipe="r" />
-          </li>
-        </ul>
+            <p class="font-heading text-h3 text-uling">No matches yet</p>
+            <p class="mt-2 text-small text-kawayan">
+              Try clearing filters or searching another ingredient.
+            </p>
+            <button
+              type="button"
+              class="mt-6 min-h-[48px] rounded-btn bg-terracotta px-6 font-body text-small font-semibold text-white hover:bg-terracotta-dark"
+              @click="clearFilters"
+            >
+              Clear filters
+            </button>
+          </div>
+          <ul
+            v-else
+            class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <li v-for="r in visibleRecipes" :key="r.id">
+              <RecipeCard :recipe="r" hide-featured-badge />
+            </li>
+          </ul>
 
-        <!-- Infinite scroll sentinel -->
-        <div ref="sentinel" class="h-px" aria-hidden="true" />
+          <!-- Infinite scroll sentinel -->
+          <div ref="sentinel" class="h-px" aria-hidden="true" />
 
-        <!-- Loading indicator -->
-        <div v-if="hasMore" class="mt-8 flex justify-center">
-          <div class="flex gap-1.5">
-            <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta [animation-delay:-0.3s]" />
-            <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta [animation-delay:-0.15s]" />
-            <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta" />
+          <!-- Loading indicator -->
+          <div v-if="hasMore" class="mt-8 flex justify-center">
+            <div class="flex gap-1.5">
+              <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta [animation-delay:-0.3s]" />
+              <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta [animation-delay:-0.15s]" />
+              <span class="h-2 w-2 animate-bounce rounded-full bg-terracotta" />
+            </div>
           </div>
         </div>
       </div>

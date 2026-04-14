@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { filterGroups } from '@/data/recipes'
 import type { Difficulty } from '@/types/recipe'
+import MobileActiveFilters, { type ActiveFilter } from '@/components/MobileActiveFilters.vue'
 
 const query = defineModel<string>('query', { default: '' })
 
@@ -33,6 +34,22 @@ const activeCount = computed(
     props.difficulties.size +
     props.ingredients.size,
 )
+
+const activeFiltersArray = computed(() => {
+  const result: ActiveFilter[] = []
+  props.courses.forEach(v => result.push({ type: 'course', value: v }))
+  props.regions.forEach(v => result.push({ type: 'region', value: v }))
+  props.difficulties.forEach(v => result.push({ type: 'difficulty', value: v }))
+  props.ingredients.forEach(v => result.push({ type: 'ingredient', value: v }))
+  return result
+})
+
+function removeFilter(f: ActiveFilter) {
+  if (f.type === 'course') emit('toggleCourse', f.value)
+  else if (f.type === 'region') emit('toggleRegion', f.value)
+  else if (f.type === 'difficulty') emit('toggleDifficulty', f.value as Difficulty)
+  else if (f.type === 'ingredient') emit('toggleIngredient', f.value)
+}
 
 const chipBase =
   'min-h-[44px] min-w-[44px] touch-manipulation rounded-chip px-3 py-2 font-body text-small font-medium transition duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-bigas'
@@ -76,27 +93,39 @@ const chipOnOther = 'bg-terracotta text-white ring-1 ring-terracotta'
     </div>
 
     <!-- Filter trigger row — mobile only (always shown) -->
-    <div class="flex items-center justify-between md:hidden">
-      <p class="font-heading text-h3 text-uling">Browse by</p>
-      <button
-        type="button"
-        class="relative inline-flex min-h-[44px] items-center gap-2 rounded-btn border-[1.5px] px-4 font-body text-small font-semibold shadow-sm transition"
-        :class="activeCount > 0
-          ? 'border-terracotta bg-terracotta/5 text-terracotta'
-          : 'border-bayong bg-white text-uling hover:border-terracotta hover:text-terracotta'"
-        @click="sheetOpen = true"
-        aria-haspopup="dialog"
-        :aria-label="`Filters${activeCount > 0 ? `, ${activeCount} active` : ''}`"
-      >
-        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M7 8h10M11 12h2M9 16h6" />
-        </svg>
-        <span>Filters</span>
-        <span
-          v-if="activeCount > 0"
-          class="flex h-5 w-5 items-center justify-center rounded-full bg-terracotta text-[11px] font-bold text-white"
-        >{{ activeCount }}</span>
-      </button>
+    <div class="flex flex-col gap-4 md:hidden">
+      <div class="flex items-center justify-between">
+        <p class="font-heading text-h3 text-uling">Browse by</p>
+        <button
+          type="button"
+          class="relative inline-flex min-h-[44px] items-center gap-2 rounded-btn border-[1.5px] px-4 font-body text-small font-semibold shadow-sm transition"
+          :class="activeCount > 0
+            ? 'border-terracotta bg-terracotta/5 text-terracotta'
+            : 'border-bayong bg-white text-uling hover:border-terracotta hover:text-terracotta'"
+          @click="sheetOpen = true"
+          aria-haspopup="dialog"
+          :aria-expanded="sheetOpen"
+          :aria-label="`Filters${activeCount > 0 ? `, ${activeCount} active` : ''}`"
+        >
+          <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M7 8h10M11 12h2M9 16h6" />
+          </svg>
+          <span>Filters</span>
+          <span
+            v-if="activeCount > 0"
+            class="flex h-5 w-5 items-center justify-center rounded-full bg-terracotta text-[11px] font-bold text-white"
+          >{{ activeCount }}</span>
+        </button>
+      </div>
+
+      <Transition name="fade">
+        <MobileActiveFilters
+          v-if="activeFiltersArray.length > 0"
+          :filters="activeFiltersArray"
+          @remove="removeFilter"
+          @open="sheetOpen = true"
+        />
+      </Transition>
     </div>
 
     <!-- Inline filter panel — desktop only -->
@@ -293,5 +322,15 @@ const chipOnOther = 'bg-terracotta text-white ring-1 ring-terracotta'
 .sheet-enter-from .sheet-panel,
 .sheet-leave-to .sheet-panel {
   transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

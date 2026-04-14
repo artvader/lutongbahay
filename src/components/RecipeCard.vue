@@ -5,6 +5,7 @@ import StarRating from '@/components/StarRating.vue'
 
 defineProps<{
   recipe: Recipe
+  hideFeaturedBadge?: boolean
 }>()
 
 const totalMins = (r: Recipe) => r.prepMins + r.cookMins
@@ -29,7 +30,7 @@ const totalMins = (r: Recipe) => r.prepMins + r.cookMins
         />
       </div>
       <div class="p-4">
-        <div v-if="recipe.featured" class="mb-2 inline-flex rounded-chip bg-calamansi px-3 py-0.5 font-body text-caption font-semibold uppercase tracking-wider text-uling">
+        <div v-if="recipe.featured && !hideFeaturedBadge" class="mb-2 inline-flex rounded-chip bg-calamansi px-3 py-0.5 font-body text-caption font-semibold uppercase tracking-wider text-uling">
           Featured
         </div>
         <h2 class="font-heading text-lg text-uling group-hover:text-terracotta-dark">
