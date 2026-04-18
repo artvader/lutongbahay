@@ -8,6 +8,7 @@
     "dev:frontend": "vite",
     "dev:backend": "php cms-project/artisan serve --host=127.0.0.1 --port=8000",
     "build": "vite build",
+    "build:shared-hosting": "node scripts/build-shared-hosting.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

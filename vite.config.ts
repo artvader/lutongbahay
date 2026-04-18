@@ -2,8 +2,18 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
+const normalizeBasePath = (value?: string) => {
+  if (!value || value === '/') return '/'
+
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`
+  return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+}
+
 export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/frontend/' : '/',
+  base:
+    command === 'build'
+      ? `${normalizeBasePath(process.env.VITE_APP_BASE_PATH)}frontend/`
+      : '/',
   plugins: [vue()],
   server: {
     proxy: {

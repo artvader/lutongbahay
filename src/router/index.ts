@@ -5,8 +5,15 @@ import RecipeView from '@/views/RecipeView.vue'
 import SavedView from '@/views/SavedView.vue'
 import MoreView from '@/views/MoreView.vue'
 
+const normalizeAppBase = (value?: string) => {
+  if (!value || value === '/') return '/'
+
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`
+  return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+}
+
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(normalizeAppBase(import.meta.env.VITE_APP_BASE_PATH)),
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/browse', name: 'browse', component: BrowseView },

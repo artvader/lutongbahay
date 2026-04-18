@@ -6,7 +6,15 @@ const loading = ref(false)
 const loaded = ref(false)
 const error = ref<string | null>(null)
 
-const API_BASE = import.meta.env.VITE_CMS_API_BASE_URL || '/api'
+const normalizeBasePath = (value?: string) => {
+  if (!value || value === '/') return '/'
+
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`
+  return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+}
+
+const defaultApiBase = `${normalizeBasePath(import.meta.env.VITE_APP_BASE_PATH)}api`
+const API_BASE = import.meta.env.VITE_CMS_API_BASE_URL || defaultApiBase
 
 const fallbackFilterGroups = {
   course: ['Main', 'Soup', 'Noodles', 'Appetizer', 'Dessert'],

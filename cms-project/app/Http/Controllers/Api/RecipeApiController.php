@@ -33,7 +33,7 @@ class RecipeApiController extends Controller
             'slug' => $recipe->slug,
             'title' => $recipe->title,
             'description' => $recipe->description ?? $recipe->excerpt ?? '',
-            'imageUrl' => $recipe->image_url ?? '',
+            'imageUrl' => $this->resolveImageUrl($recipe->image_url),
             'imageAlt' => $recipe->image_alt ?? $recipe->title,
             'prepMins' => (int) $recipe->prep_mins,
             'cookMins' => (int) $recipe->cook_mins,
@@ -47,5 +47,20 @@ class RecipeApiController extends Controller
             'ingredients' => $recipe->ingredients ?? [],
             'steps' => $recipe->steps ?? [],
         ];
+    }
+
+    private function resolveImageUrl(?string $imageUrl): string
+    {
+        if (! $imageUrl) {
+            return '';
+        }
+
+        if (preg_match('/^https?:\/\//i', $imageUrl)) {
+            return $imageUrl;
+        }
+
+        $normalizedPath = ltrim($imageUrl, '/');
+
+        return url($normalizedPath);
     }
 }
